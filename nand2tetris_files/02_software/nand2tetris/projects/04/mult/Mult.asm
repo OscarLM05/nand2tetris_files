@@ -10,3 +10,24 @@
 // R0 >= 0, R1 >= 0, and R0*R1 < 32768.
 
 // Put your code here.
+@x  //This will be set to 0 so that it could help the program know when to stop adding.
+M=0
+@R2
+M=0
+(loop)
+@x
+D=M
+@R0
+D=D+M  //This is x(0) + the value given to R0, needed because later we will decrement x until x+R0=0.
+@END
+D;JEQ
+@R1
+D=M
+@R2
+M=M+D
+@x
+M=M-1
+@loop
+0;JMP
+(END)
+0;JMP

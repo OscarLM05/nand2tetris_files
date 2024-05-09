@@ -12,3 +12,33 @@
 // the screen should remain fully clear as long as no key is pressed.
 
 // Put your code here.
+(WHITE)  //Loop for turning the screen white.
+@KBD
+D=M
+@BLACK
+D;JGT
+@x
+D=M
+@SCREEN
+D=D+A
+A=D-1
+M=0
+@x
+M=M-1
+@WHITE
+0;JMP
+(BLACK)  //Loop for turning the screen black.
+@24575
+D=M
+@WHITE
+D;JLT  //If screen gets filled, go to white.
+@x
+D=M
+@SCREEN
+D=D+A
+A=D
+M=-1
+@x
+M=M+1
+@BLACK
+0;JMP
