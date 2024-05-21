@@ -40,4 +40,27 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
+    Not(in=instruction[15], out=adout);//This is used to help select if it is a A or D instruction.
+    Mux16(a=aluout, b=instruction, sel=adout, out=muxout);
+    Or(a=adout, b=instruction[5], out=orout);//Chooses whether to load the value into the A register.
+    ARegister(in=muxout, load=orout, out=aout, out[0..14]=addressM);//0..14 because thats the bits used for addressing in A instruction.
+    And(a=instruction[15], b=instruction[12], out=aorm);// Helps pick if we want to use memory value or A value.
+    Mux16(a=aout, b=inM, sel=aorm, out=muxout2);
+    ALU(x=dout, y=muxout2, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=aluout, out=outM, zr=zero, ng=ngout);
+    And(a=instruction[15], b=instruction[4], out=loadd);//decides if it should load D register.
+    DRegister(in=aluout, load=loadd, out=dout);
+    And(a=instruction[15], b=instruction[3], out=writeM);
+    Not(in=ngout, out=positive);
+    Not(in=zero, out=notzero);
+    And(a=instruction[15], b=instruction[0], out=jgt);
+    And(a=positive, b=notzero, out=pandnz);
+    And(a=jgt, b=pandnz, out=jgtmet);//Decides if jgt is met
+    And(a=instruction[15], b=instruction[1], out=jeq);
+    And(a=jeq, b=zero, out=jeqmet);
+    And(a=instruction[15], b=instruction[2], out=jlt);
+    And(a=jlt, b=ngout, out=jltmet);
+    Or(a=jgtmet, b=jeqmet, out=pjmp);
+    Or(a=jltmet, b=pjmp, out=jump);
+    PC(in=aout, load=jump, inc=true, reset=reset, out[0..14]=pc);
+
 }
